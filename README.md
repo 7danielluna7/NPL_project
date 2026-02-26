@@ -12,3 +12,5 @@ In this assignment you will
 7. Commit and push your work to Github.
 
 You can use the quakersaints example as a model for how to do this or you can follow the model in the Tidy Text Mining book.
+
+#Used the quakersaints model to trim the section of Finn the wolfhound by A. J. Dawson

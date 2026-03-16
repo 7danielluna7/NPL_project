@@ -1,0 +1,7 @@
+---
+title: "Sentiment analysis"
+output: html_document
+---
+
+Use this as a starter file for sentiment analysis.  You should try each of the three lexicons. 
+It may make sense to copy this file and use one file per lexicon.

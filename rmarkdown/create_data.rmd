@@ -1,5 +1,107 @@
 ---
-title: "Create My Data"
+title: "Curating the data, part 1: Finn the Wolfhound"
 output: html_document
 ---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(dplyr)
+library(stringr)
+library(here)
+library(gutenbergr)
+library(tidyr)
+```
+
+```{r load-data}
+
+if (!dir.exists(here("data"))) {
+  dir.create(here("data"))
+}
+
+if (!file.exists(here("data/finn.rda"))) {
+     
+     finn <- gutenberg_download(30550)
+    
+     save(finn, file=here("data/finn.rda"))
+} else {
+
+     load(here("data/finn.rda"))
+}
+```
+
+
+```{r }
+
+finn <- finn |> mutate(row_number = row_number())
+
+# Subset the data to remove the Gutenberg intro and outro.
+
+finn_trimmed <- finn |> 
+  filter(row_number > 50 & row_number < 15000)
+```
+```{r}
+sample(finn)
+```
+
+```{r}
+table_of_contents <- finn |>
+                     filter(row_number >= 20 & row_number <= 45) |>
+                     filter(text != "")
+```
+```{r}
+# add the indicator for younger audiences
+table_of_contents <- table_of_contents |>
+                     mutate(younger = substr(text, 1, 1) == "*")
+```
+```{r}
+table_of_contents <- table_of_contents |>
+  mutate(
+    title = "Title",
+    # Anything containing the word "CHAPTER" is the main story, otherwise it's front/back matter
+    text_type = case_when(
+      str_detect(text, "CHAPTER") ~ "Story",
+      TRUE ~ "Front/Back Matter"
+    )
+  )
+```
+```{r}
+# Match the TOC strings to the strings in the trimmed book
+table_of_contents |>
+  rename(toc_row = row_number) |>
+  select(-gutenberg_id)  |>
+  left_join(finn_trimmed, by = "text") |>
+  rename(title_row = row_number) ->
+  table_of_contents
+
+# Number the titles (Finn the Wolfhound likely doesn't have epigraphs, but this sets it up just in case)
+table_of_contents <- table_of_contents |> 
+  group_by(text) |> 
+  mutate(title_number = row_number(),
+         title_type = "main") |> 
+  ungroup() |>
+  mutate(section_title = text)
+```
+
+```{r}
+finn_trimmed <- finn_trimmed |>
+  left_join(table_of_contents,
+             by = join_by( "text" == "text",
+                           "row_number" == "title_row",
+                           "gutenberg_id" == "gutenberg_id")) |>
+  arrange(row_number)
+```
+```{r}
+
+# Fill the missing metadata down the rows
+finn_trimmed <- finn_trimmed |> 
+  mutate(title = ifelse(is.na(title) == TRUE, "Text", "Title")) |>
+  fill(text_type) |> 
+  fill(title_type) |>
+  fill(section_title) 
+
+save(finn_trimmed, file = here("data/finn_trimmed.rda"))
+```
+
+
+
+
 

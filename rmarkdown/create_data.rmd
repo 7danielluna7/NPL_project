@@ -101,6 +101,21 @@ finn_trimmed <- finn_trimmed |>
 save(finn_trimmed, file = here("data/finn_trimmed.rda"))
 ```
 
+```{r}
+# creating the tokenization of my book 
+library(tidytext)
+
+
+finn_tokens <- finn_trimmed |>
+  unnest_tokens(word, text)
+
+data(stop_words)
+
+finn_clean <- finn_tokens |>
+  anti_join(stop_words, by = "word")
+
+save(finn_clean, file = here("data/finn_clean.rda"))
+```
 
 
 

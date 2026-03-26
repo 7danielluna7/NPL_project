@@ -5,3 +5,33 @@ output: html_document
 
 Use this as a starter file for sentiment analysis.  You should try each of the three lexicons. 
 It may make sense to copy this file and use one file per lexicon.
+```{r}
+library(here)
+library(dplyr)
+library(tidytext)
+library(tidyr)
+library(ggplot2)
+
+
+load(here("data/finn_clean.rda"))
+```
+### im assining values to each word 
+
+```{r}
+install.packages("textdata")
+afinn <- get_sentiments("afinn")
+
+finn_afinn <- finn_clean |> 
+  inner_join(afinn, by = "word")
+
+table(finn_afinn$value) |> prop.table() |> round(2)
+```
+### mkae a graph to show if the fiin book is generaly happy or sad 
+```{r}
+ggplot(finn_afinn, aes(x = value)) + 
+  geom_histogram(bins = 11, fill = "steelblue", color = "white") +
+  labs(title = "Sentiment Distribution in Finn the Wolfhound",
+       x = "Sentiment Score (-5 to 5)",
+       y = "Frequency")
+```
+

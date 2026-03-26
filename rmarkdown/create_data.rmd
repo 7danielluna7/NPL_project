@@ -36,7 +36,7 @@ finn <- finn |> mutate(row_number = row_number())
 # Subset the data to remove the Gutenberg intro and outro.
 
 finn_trimmed <- finn |> 
-  filter(row_number > 50 & row_number < 15000)
+  filter(row_number > 144 & row_number < 15000)
 ```
 ```{r}
 sample(finn)
@@ -44,9 +44,12 @@ sample(finn)
 
 ```{r}
 table_of_contents <- finn |>
-                     filter(row_number >= 20 & row_number <= 45) |>
+                     filter(row_number >= 20 & row_number <= 80) |>
                      filter(text != "")
 ```
+### In my final data i would not like to have the table of cotents and information thanking guttenberg. 
+
+
 ```{r}
 # add the indicator for younger audiences
 table_of_contents <- table_of_contents |>
@@ -100,6 +103,13 @@ finn_trimmed <- finn_trimmed |>
 
 save(finn_trimmed, file = here("data/finn_trimmed.rda"))
 ```
+```{r}
+head(finn_trimmed)
+tail(finn_trimmed)
+
+```
+
+### made sure there was only files from the chapeters
 
 ```{r}
 # creating the tokenization of my book 

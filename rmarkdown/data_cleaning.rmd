@@ -2,9 +2,23 @@
 title: "Cleaning data"
 output: html_document
 ---
-
+```{r}
+library(dplyr)
+library(stringr)
+library(here)
+```
 Use this document to work on cleaning your data and adding any additional variables that may be relevant.
 
 You can also add other files if it will help to organize your process (see the quakersaints-example)
 
+### loading data to check if tokonizations was succesful 
+```{r}
+load(here("data/finn_clean.rda"))
+
+head(finn_clean,10)
+
+```
+```{r}
+
+```
 

@@ -34,4 +34,4 @@ ggplot(finn_afinn, aes(x = value)) +
        x = "Sentiment Score (-5 to 5)",
        y = "Frequency")
 ```
-
+###from the graph it looks to me that it is a neutralbook  to sligtly sad 

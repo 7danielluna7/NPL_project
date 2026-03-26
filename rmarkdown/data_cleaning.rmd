@@ -18,6 +18,8 @@ load(here("data/finn_clean.rda"))
 head(finn_clean,10)
 
 ```
+
+### reminder to fix the toc rows and section titles that i had errors 
 ```{r}
 
 ```

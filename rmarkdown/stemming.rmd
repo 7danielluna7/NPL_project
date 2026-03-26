@@ -1,0 +1,3 @@
+Use this file to stem your tokenized data.  
+How many unique unstemmed and stemmed words do you have? 
+Analyze the top works with the stemmed values.  Does this change the rank of any words?

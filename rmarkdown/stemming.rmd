@@ -1,3 +1,56 @@
-Use this file to stem your tokenized data.  
-How many unique unstemmed and stemmed words do you have? 
-Analyze the top works with the stemmed values.  Does this change the rank of any words?
+---
+title: "Stemming: Finn the Wolfhound"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(SnowballC)
+library(dplyr)
+library(ggplot2)
+library(here)
+```
+
+
+```{r}
+wordStem(c("win", "winning", "winner"))
+wordStem(c("call", "calling", "called"))
+```
+```{r}
+getStemLanguages()
+```
+```{r}
+if (file.exists(here("data/finn_clean.rda"))) {
+     load(here("data/finn_clean.rda")) 
+} else {
+  print("finn_clean.rda not present. Please run the curation script first.")
+  knitr::knit_exit()
+}
+```
+```{r}
+finn_clean |> 
+  mutate(word_stemmed = wordStem(word, language = "english")) -> finn_clean
+
+# Save the updated dataset so it includes our new stemmed words!
+save(finn_clean, file = here("data/finn_clean.rda"))
+```
+```{r}
+finn_clean |> count(word_stemmed, sort = TRUE) |>
+  filter(n > 150) |>
+  mutate(word_stemmed = reorder(word_stemmed, n)) |>
+  ggplot(aes(n, word_stemmed)) +
+  geom_col() +
+  labs(title = "Top Stemmed Words in Finn the Wolfhound",
+       y = NULL, x = "Count")
+```
+
+```{r}
+finn_clean |> count(word, sort = TRUE) |>
+  filter(n > 150) |>
+  mutate(word = reorder(word, n)) |>
+      
+  ggplot(aes(x = n, y = word)) +
+  geom_col() +
+  labs(title = "Top Original Words in Finn the Wolfhound",
+       y = NULL, x = "Count")
+```
+### There are darker words in the stemmed version. It gives a environemnt. It is in woods. 

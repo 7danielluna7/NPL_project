@@ -1,16 +1,18 @@
 ---
-title: "Sentiment analysis"
+title: "Sentiment Analysis using the NRC Lexicon: Finn the Wolfhound"
 output: html_document
 ---
 
-Use this as a starter file for sentiment analysis.  You should try each of the three lexicons. 
-It may make sense to copy this file and use one file per lexicon.
+
+### Use this as a starter file for sentiment analysis.  You should try each of the three lexicons. 
+### It may make sense to copy this file and use one file per lexicon.
 ```{r}
 library(here)
 library(dplyr)
 library(tidytext)
 library(tidyr)
 library(ggplot2)
+library(knitr)
 
 
 load(here("data/finn_clean.rda"))
@@ -18,20 +20,32 @@ load(here("data/finn_clean.rda"))
 ### im assining values to each word 
 
 ```{r}
-install.packages("textdata")
-afinn <- get_sentiments("afinn")
+nrc <- get_sentiments("nrc")
 
-finn_afinn <- finn_clean |> 
-  inner_join(afinn, by = "word")
-
-table(finn_afinn$value) |> prop.table() |> round(2)
+nrc |> inner_join(finn_clean, by = "word", multiple = "all",
+                  relationship = "many-to-many") -> fw_nrc
 ```
-### mkae a graph to show if the fiin book is generaly happy or sad 
 ```{r}
-ggplot(finn_afinn, aes(x = value)) + 
-  geom_histogram(bins = 11, fill = "steelblue", color = "white") +
-  labs(title = "Sentiment Distribution in Finn the Wolfhound",
-       x = "Sentiment Score (-5 to 5)",
-       y = "Frequency")
+fw_nrc |> 
+  group_by(sentiment) |> 
+  summarize(number = n()) |> 
+  arrange(desc(number))
+``` 
+
+###from the word sentiment it looks to me that it is a neutralbook with fear being a top word. 
+```{r}
+fw_nrc |> 
+  filter(sentiment == "fear") |> 
+  count(word, sort = TRUE) |> 
+  head(20) |> 
+  kable(caption = "Top 20 'FEAR' words in Finn the Wolfhound")
 ```
-###from the graph it looks to me that it is a neutralbook  to sligtly sad 
+### looking at the words it does help pain a picture of the book but i will also looko at the trusting words
+```{r}
+fw_nrc |> 
+  filter(sentiment == "trust") |> 
+  count(word, sort = TRUE) |> 
+  head(20) |> 
+  kable(caption = "Top 20 'Trust' words in Finn the Wolfhound")
+```
+###

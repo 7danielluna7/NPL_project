@@ -6,6 +6,7 @@ output: html_document
 library(dplyr)
 library(stringr)
 library(here)
+library(tidyr)
 ```
 Use this document to work on cleaning your data and adding any additional variables that may be relevant.
 
@@ -20,6 +21,56 @@ head(finn_clean,10)
 ```
 
 ### reminder to fix the toc rows and section titles that i had errors 
+```{r}
+
+```
+
+What I see here is that while the table of contents says
+
+> CHAPTER XXXIII. Back from the Wild
+
+The text says 
+>BACK FROM THE WILD
+on line 10863.
+So to match up the titles from the table of contents 
+to the chapters you will need to  chop off everything
+up to the "." in the table of contents. 
+Then change them to upper case.
+
+```{r}
+finn |> 
+  # add the line number
+  mutate(line_number =row_number()) -> finn
+
+finn |> filter(line_number %in% 33:97) |>
+  filter(text != "") -> toc
+toc
+```
+```{r}
+toc |> 
+  mutate(title = str_extract(text,
+                        "(?<=\\.).*") |> 
+           toupper() |> trimws(), 
+         chapter_title = title) |>
+    rename(toc_text = text) |>
+     select(-line_number)-> toc
+toc
+```
+Then you can add this information to the original data
+
+```{r}
+finn |> left_join(toc, join_by(
+  "gutenberg_id" == "gutenberg_id",
+   "text" == "title"
+  )) |> fill(chapter_title) -> finn
+```
+
+At this point you can save the updated file.
+THen you can go back and tokenize, stem etc.
+This way you can compare the chapters to each other.
+
+
+
 ```{r}
 
 ```

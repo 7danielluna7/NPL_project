@@ -13,16 +13,21 @@ Use this document to work on cleaning your data and adding any additional variab
 You can also add other files if it will help to organize your process (see the quakersaints-example)
 
 ### loading data to check if tokonizations was succesful 
-```{r}
-load(here("data/finn_clean.rda"))
+```{r load-data}
 
-head(finn_clean,10)
+if (!dir.exists(here("data"))) {
+  dir.create(here("data"))
+}
 
-```
+if (!file.exists(here("data/finn.rda"))) {
+     
+     finn <- gutenberg_download(30550)
+    
+     save(finn, file=here("data/finn.rda"))
+} else {
 
-### reminder to fix the toc rows and section titles that i had errors 
-```{r}
-
+     load(here("data/finn.rda"))
+}
 ```
 
 What I see here is that while the table of contents says
@@ -72,6 +77,6 @@ This way you can compare the chapters to each other.
 
 
 ```{r}
-
+save(finn, file = here("data/finn_with_chapters.rda"))
 ```
 

@@ -1,4 +1,1 @@
 
-
-Use this file to try doing a cluster analysis.  You don't have to use the nrc data for that, feel free to try something else if you want.
-

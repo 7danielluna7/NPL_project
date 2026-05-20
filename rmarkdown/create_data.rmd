@@ -11,22 +11,7 @@ library(gutenbergr)
 library(tidyr)
 ```
 
-```{r load-data}
 
-if (!dir.exists(here("data"))) {
-  dir.create(here("data"))
-}
-
-if (!file.exists(here("data/finn.rda"))) {
-     
-     finn <- gutenberg_download(30550)
-    
-     save(finn, file=here("data/finn.rda"))
-} else {
-
-     load(here("data/finn.rda"))
-}
-```
 
 
 ```{r }

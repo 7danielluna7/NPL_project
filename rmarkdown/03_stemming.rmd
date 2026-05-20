@@ -1,0 +1,95 @@
+---
+title: "Stemming: Finn the Wolfhound"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(SnowballC)
+library(dplyr)
+library(ggplot2)
+library(here)
+load(here("data/finn_clean.rda"))
+
+```
+```{r}
+# We create a new column for stemmed 
+finn_stemmed <- finn_clean |> 
+  mutate(word_stemmed = wordStem(word, language = "english"))
+
+# Save this as a NEW dataset so your unstemmed finn_clean.rda remains untouched!
+save(finn_stemmed, file = here("data/finn_stemmed.rda"))
+```
+
+
+
+```{r}
+wordStem(c("win", "winning", "winner"))
+wordStem(c("call", "calling", "called"))
+```
+```{r}
+getStemLanguages()
+```
+
+```{r}
+finn_stemmed |> 
+  mutate(word_stemmed = wordStem(word, language = "english")) -> finn_clean
+
+# Save the updated dataset so it includes our new stemmed words!
+save(finn_clean, file = here("data/finn_clean.rda"))
+```
+```{r}
+finn_clean |> count(word_stemmed, sort = TRUE) |>
+  filter(n > 150) |>
+  mutate(word_stemmed = reorder(word_stemmed, n)) |>
+  ggplot(aes(n, word_stemmed)) +
+  geom_col() +
+  labs(title = "Top Stemmed Words in Finn the Wolfhound",
+       y = NULL, x = "Count")
+```
+
+```{r}
+finn_clean |> count(word, sort = TRUE) |>
+  filter(n > 150) |>
+  mutate(word = reorder(word, n)) |>
+      
+  ggplot(aes(x = n, y = word)) +
+  geom_col() +
+  labs(title = "Top Original Words in Finn the Wolfhound",
+       y = NULL, x = "Count")
+```
+
+
+## addition visiluzations 
+```{r}
+# Plot 1: Stemmed Words
+finn_stemmed |> 
+  count(word_stemmed, sort = TRUE) |>
+  filter(n > 150) |>
+  mutate(word_stemmed = reorder(word_stemmed, n)) |>
+  ggplot(aes(x = n, y = word_stemmed)) +
+  geom_col(fill = "darkred") +
+  labs(title = "Top Stemmed Words in Finn the Wolfhound",
+       y = NULL, x = "Count") +
+  theme_minimal()
+```
+```{r}
+# Plot 2: Original Unstemmed Words
+finn_stemmed |> 
+  count(word, sort = TRUE) |>
+  filter(n > 150) |>
+  mutate(word = reorder(word, n)) |>
+  ggplot(aes(x = n, y = word)) +
+  geom_col(fill = "steelblue") +
+  labs(title = "Top Original Words in Finn the Wolfhound",
+       y = NULL, x = "Count") +
+  theme_minimal()
+```
+
+### The Impact of Stemming:
+####Notes: Before stemming, environmental words (dark, darkness, darker, wood, woods) were fragmented across different spellings and appeared insinificant. 
+####now applying the steeming algorithim from snowball it gives an environment to the finn book. 
+
+####circling back to the book by REpresenting animals where older books put animals in either a biogrhy and in "FEAR" dangeroud situtions to exerbate drama. 
+
+####find quutes from the book for poster 
+####also set up hypothesis that the finn book will have fear and dark sentiments. 

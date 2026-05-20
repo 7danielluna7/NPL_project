@@ -1,0 +1,106 @@
+---
+title: "Curating the data, part 1: Finn the Wolfhound"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(dplyr)
+library(stringr)
+library(here)
+library(gutenbergr)
+library(tidyr)
+library(tidytext)
+library(ggplot2)
+load(here("data/finn_with_chapters.rda"))
+
+
+raw_text_data <- finn 
+
+
+```
+
+
+
+### curating data to remove the outlier words
+```{r}
+finn_curated <- raw_text_data |>
+  
+  
+  # 1. Add a line number to keep track of the text order
+  mutate(linenumber = row_number()) |>
+  
+  # 2. Use your manual cut-off to drop the Gutenberg footer at the end of the book
+  filter(linenumber < 15000) |> 
+  
+  # 3. Detect chapters. Every time a line starts with "CHAPTER", it adds 1 to the chapter count.
+  mutate(chapter = cumsum(str_detect(text, regex("^CHAPTER", ignore_case = FALSE)))) |>
+  
+  # 4. Filter out everything BEFORE Chapter 1 (This removes the TOC, Title page, and Intro)
+  filter(chapter > 0)
+
+# Take a peek to make sure the first row is now the start of Chapter 1
+head(finn_curated)
+```
+
+
+
+```{r}
+# We combine your tokenization and stop-word removal into one clean step
+data(stop_words)
+
+finn_clean <- finn_curated |> 
+  unnest_tokens(output = word, input = text, token = "words") |>
+  anti_join(stop_words, by = "word")
+
+# Check the unique words and total row count
+unique(finn_clean$word) |> length()
+nrow(finn_clean)
+```
+### Checking the unique words
+```{r}
+unique(fw_tokens$word) |> length()
+
+```
+
+### We can also check for the most common words
+```{r}
+fw_tokens |> count(word, sort = TRUE) |> head(20)
+```
+### since the most commons word might mess with our sentiment data, the stop words need to be replaced. 
+```{r}
+fw_tokens |> anti_join(stop_words) -> fw_tokens2
+
+unique(fw_tokens2$word) |> length()
+nrow(fw_tokens2)
+head(fw_tokens2)
+```
+```{r}
+fw_tokens2 |> count(word, sort = TRUE)
+```
+### We will start exploring the new interesting words that are not common in the english language.
+```{r}
+fw_tokens2 |> count(word, sort = TRUE) |>
+  filter(n > 100) |>
+  mutate(word = reorder(word, n)) |>
+  
+  ggplot(aes(x = word, y = n)) +
+  coord_flip() +
+  geom_col() +
+  labs(y = NULL)
+```
+### I can see that the msot common words are finn and master, which shows me a good undertanding about the sory and the environment. 
+```{r}
+# Tokenize into individual words
+finn_tokens <- finn_curated |>
+  unnest_tokens(word, text)
+
+# Load the stop words dictionary
+data(stop_words)
+
+# Remove the stop words
+finn_clean <- finn_tokens |>
+  anti_join(stop_words, by = "word")
+
+# Save the final, clean, tokenized data to use in your sentiment analysis!
+save(finn_clean, file = here("data/finn_clean.rda"))
+```

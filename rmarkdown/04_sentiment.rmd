@@ -1,0 +1,97 @@
+---
+title: "Sentiment Analysis using the NRC Lexicon: Finn the Wolfhound"
+output: html_document
+---
+
+
+
+
+```{r}
+library(here)
+library(dplyr)
+library(tidytext)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+
+
+load(here("data/finn_clean.rda"))
+```
+### Use this as a starter file for sentiment analysis.  You should try each of the three lexicons. 
+### It may make sense to copy this file and use one file per lexicon.
+
+##decided to only explore nrc lexicon but add a word cloud first.
+
+```{r}
+install.packages("wordcloud")
+library(wordcloud)
+library(RColorBrewer) 
+
+# Create a word cloud of the top 100 most frequent words in the book
+finn_clean |>
+  count(word, sort = TRUE) |>
+  with(wordcloud(words = word, freq = n, 
+                 max.words = 100, 
+                 random.order = FALSE, 
+                 colors = brewer.pal(8, "Dark2")))
+```
+### im assining values to each word 
+
+```{r}
+nrc <- get_sentiments("nrc")
+
+nrc |> inner_join(finn_clean, by = "word", multiple = "all",
+                  relationship = "many-to-many") -> fw_nrc
+```
+```{r}
+fw_nrc |> 
+  group_by(sentiment) |> 
+  summarize(number = n()) |> 
+  arrange(desc(number))
+``` 
+
+###from the word sentiment it looks to me that it is a neutralbook with fear being a top word. 
+```{r}
+fw_nrc |> 
+  filter(sentiment == "fear") |> 
+  count(word, sort = TRUE) |> 
+  head(20) |> 
+  kable(caption = "Top 20 'FEAR' words in Finn the Wolfhound")
+```
+### looking at the words it does help pain a picture of the book but i will also looko at the trusting words
+```{r}
+fw_nrc |> 
+  filter(sentiment =="trust") |> 
+  count(word, sort = TRUE) |> 
+  head(20) |> 
+  kable(caption = "Top 20 'Trust' words in Finn the Wolfhound")
+```
+#####I can see that there ia relatiship of high trust with mother and professor 
+
+#### Create a bar chart of the overall emotional tone and getting vizulizations for a story 
+```{r}
+fw_nrc |> 
+  group_by(sentiment) |> 
+  summarize(number = n()) |> 
+  ggplot(aes(x = reorder(sentiment, number), y = number, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(title = "Overall Sentiment Distribution in Finn the Wolfhound",
+       x = "Sentiment", y = "Number of Words") +
+  theme_minimal()
+```
+
+```{r}
+# Plot the top 15 words driving the "Fear" sentiment
+fw_nrc |> 
+  filter(sentiment == "fear") |> 
+  count(word, sort = TRUE) |> 
+  head(15) |> 
+  ggplot(aes(x = reorder(word, n), y = n)) +
+  geom_col(fill = "darkred") +
+  coord_flip() +
+  labs(title = "Top 15 'Fear' Words in Finn the Wolfhound",
+       x = "Word", y = "Count") +
+  theme_minimal()
+```
+### defenily found some insight that i liked. I noticed that fear words are when the dog is in the wild or woods. It could be a time when he is with the master but to futher show this i will be using clustering to see if there is a timeline. does the author give more fear and trust in certain chapters? is the fear more apperent when the dog is by hilslef , "hunting" . these match perfectly with 2002 to claim and my hypothsis. 

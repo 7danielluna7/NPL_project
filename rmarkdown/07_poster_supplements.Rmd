@@ -1,91 +1,126 @@
 ---
-title: "The Emotional Environment of Finn the Wolfhound: A Computational Validation of the 2002 Literary Theory"
+title: "The Emotional Environment of Finn the Wolfhound: 2002 Validation using 2026 Methods"
 author:
   - name: Daniel Luna Miranda
     affil: 1
 affiliation:
   - num: 1
     address: Lehman College
+logoright_name: "lehmanlogo.png"
 column_numbers: 3
-primary_colour: "#0051ba" # A crisp, academic blue
+primary_colour: "#333333" 
 secondary_colour: "#ffffff"
 output: 
   posterdown::posterdown_html:
-    self_contained: true # This makes it easy to share the HTML file!
-knit: pagedown::chrome_print # This automatically creates your PDF
+    self_contained: true 
+knit: pagedown::chrome_print 
+bibliography: references.bib
 editor_options: 
   markdown: 
     wrap: sentence
 ---
 
-
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(here)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(wordcloud)
+library(RColorBrewer)
+library(kableExtra)
+
+# Load data
+load(here("data/fw_nrc.rda"))
+load(here("data/finn_clean.rda"))
+
 ```
 
-# Introduction
+# Introduction 
 
-While reading the chapter "Dog Years, Human Fears" from Representing Animals, a question came up: do we give human traits to our favorite companions?
-I recently wrote a story about my own furry friends, Kobe and Sasha.
-I gave them human emotions, connecting the feelings of a human to a dog, and expressed those feelings toward the people I care about in the form of poetry.
-Analyzing the feelings of dogs is an interesting subject; dogs certainly do have feelings to some extent, even if they are different from human emotions.
-Teresa Mangum's 2002 essay raised a fascinating hypothesis about this exact dynamic.
-She argued that people in the 19th century often put their fictional pets in dangerous situations.The author had strong opinions on how writers used these environments to project human anxieties like old age onto animals.not knwing the plot of the book or reasing the story I first used a word cloud and led me to see the most common word was master.
-I decided to take a data driven aprroch being isolated in the wild where the dogs would theoretically experience intense fear is upto debate since their answestors were wolfs and should thrive instead of fear.
-This project computationally tests that exact idea using the text of Finn the Wolfhound.
-By analyzing the emotional vocabulary of the book, I wanted to see if the author mathematically manipulated the dog's feelings, shifting between "Trust" and "Fear" depending on whether Finn was safe at home or out in the wild.
-I will be using tools and algorithms to support or reject Magnums claims.
+While reading the chapter "Dog Years, Human Fears" from Representing Animals[@mangum2002], a question came up: do we give human traits to our favorite companions?I recently wrote a story and some poetry about my own furry friends, Kobe and Sasha, projecting human emotions onto them to express how I feel about the people I care about.
 
-## Objectives
+Teresa Mangum's 2002 essay raises a fascinating hypothesis about this dynamic. She argues that 19th-century authors intentionally put their fictional pets in dangerous situations.For example, being isolated in the wild, to project human anxieties, such as aging and isolation, onto the animals. Biologically, this is highly debatable; since dogs descend from wolves, they should theoretically thrive in the wild rather than experience intense fear.
+To test Mangum's claims objectively, I took a data-driven approach to the novel Finn the Wolfhound. Having no prior knowledge of the plot, I generated a word cloud and discovered the most frequently used noun was "master."
+
+```{r}
+```{r wordcloud, fig.align='center', fig.width=5, fig.height=5, out.width="100%"}
+finn_clean |>
+  count(word, sort = TRUE) |>
+  with(wordcloud(words = word, freq = n, 
+                 max.words = 50, 
+                 random.order = FALSE, 
+                 scale = c(5, 0.5),      
+                 colors = brewer.pal(8, "Dark2")))
+```
+
+I wanted to see if the author mathematically manipulated the dog's feelings, artificially shifting between "Trust" and "Fear" depending on whether Master appeared in the text. 
+
+# Objectives
 
 The primary goal of this project is to use Natural Language Processing to mathematically map the emotional vocabulary of Finn the Wolfhound.
-Because dogs are descendants of wolves, they are naturally equipped to survive in the wild.
 I want to use statistical algorithms to see if the author artificially manipulated the narrative, forcing a spike in "Fear" words when Finn is in the wild and "Trust" words when he is with his master.
 Ultimately, this data will prove or reject Teresa Mangum's theory that 19th-century authors intentionally engineered these environments to mirror human anxieties about aging and isolation.
 
 # Methods
 
-Methods To computationally test the 2002 hypothesis, I built a Natural Language Processing (NLP) and statistical pipeline using R:
-
-Data Preprocessing: I retrieved the text from Project Gutenberg and used Regular Expressions (Regex) to extract and align the chronological chapter titles.
-I then used Tokenization to chop the text into individual words and filtered out standard English stop words.
-Word count analys: checked most common words to make a decision of the most useful data.
-"master" resebled and connects to perfectly witht he dieas of theresa where she also gave acklogement to the word.
-
-Algorithmic Stemming: I applied the Snowball Stemming Algorithm (SnowballC) to group word variations together.
-Lexicon-Based Sentiment Analysis: I used the NRC Emotion Lexicon to map emotional values to the cleaned text.
-I specifically isolated and measured the frequencies of "Trust"and "Fear".
-
-Unsupervised Machine Learning: I initially ran Clustering algorithms to search for emotional timelines.
-However, I abandoned this clustering approach when the algorithms identified extreme outlier chapters rather than the narrative environments.
-
-Statistical Inference: To establish the environments, I used a Median Split on the frequency of the word "master" to divide the book into "Domestic" and "Wild" halves.
-Finally, I executed a Pearson’s Chi-Squared Test with Yates’ Continuity Correction to mathematically prove whether the shift in "Trust" and "Fear" across these environments was statistically significant.
+To test the 2002 hypothesis, I built an NLP and statistical pipeline using R:
+* Data Preprocessing: Retrieved the text via Project Gutenberg, used Regular Expressions (Regex) to align chapter titles, and tokenized the text to filter out standard stop words.
+* Exploratory Data Analysis: Initial word counts revealed "master" most common word(excluding finn), perfectly aligning with Mangum's theories. 
+* Algorithmic Stemming: Applied the Snowball Stemming Algorithm (SnowballC) to group environmental word variations together (e.g., dark, darkness).
+* Sentiment Analysis: Used the NRC Emotion Lexicon to isolate and measure the frequencies of "Trust" and "Fear" across the text.
+* Machine Learning Models: Initially ran unsupervised clustering algorithms to search for emotional timelines, but abandoned this approach when the algorithms isolated extreme outlier chapters rather than narrative environments.[@smltar]
+* Statistical Inference: Used a median split on the frequency of the word "master" to divide the book into "Domestic" and "Wild" halves, then executed a Pearson’s Chi-Squared Test to prove if the emotional shifts were statistically significant.
 
 # Results
+Going into this analysis without knowing the plot allowed the data to lead the narrative. The numbers revealed a stark and deliberate emotional contrast between the two environments.
+Sentiment Distribution
+Mentions of "Trust" were heavily correlated with domestic figures, while "Fear" vocabulary dominated scenes where Finn was isolated.
+```{r}
+fw_nrc |> 
+  group_by(sentiment) |> 
+  summarize(number = n()) |> 
+  ggplot(aes(x = reorder(sentiment, number), y = number, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(title = "Overall Sentiment Distribution in Finn",
+       x = "Sentiment", y = "Word Count") +
+  theme_minimal(base_size = 14)
+```
 
-while takling this anis i noticed i do not know the plot of the book.I undertand my internal biased of wanting dogs to be placed in a truting environment.
-my aproced and decisions were driven by We confidently reject the null hypothesis.
-The emotional tone of Finn the Wolfhound is mathematically dependent on the dog's setting.
-The data reveals a deeper narrative layer: the emotion of "Trust" in the novel is entirely tethered to the dog's "master worship." In the chapters where Finn is isolated in the wild, this master worship is physically missing from the text, causing "Trust" vocabulary to completely plummet.
-Without the master present to anchor the dog's trust, the author deliberately surges "Fear" vocabulary to fill the void and maximize the narrative drama of the wild.
-This provides robust, data-driven validation for Teresa Mangum's 2002 literary theory.
+Statistical Proof
+Dividing the novel into "Master Present" and "Master Absent" environments yielded definitive mathematical results:
+```{r}
+master_counts <- finn_clean |>
+  filter(word == "master") |>
+  count(chapter, name = "master_mentions")
 
-# Next Steps
+median_master <- median(master_counts$master_mentions, na.rm = TRUE)
 
-teresa raised another question on wether people used human charactericstics mostly in dogs.
-She raised the questions if books about horses had any different sentiments.
-I woould like to explore this since it connects to human behaviours.
+chi_data <- fw_nrc |>
+  filter(sentiment %in% c("fear", "trust")) |>
+  left_join(master_counts, by = "chapter") |>
+  mutate(master_mentions = ifelse(is.na(master_mentions), 0, master_mentions)) |>
+  mutate(Environment = ifelse(master_mentions >= median_master, 
+                              "Domestic (Master)", 
+                              "Wild (No Master)"))
+
+sentiment_table <- table(chi_data$Environment, chi_data$sentiment)
+
+kable(sentiment_table, caption = "Word Counts: Environment vs. Emotion") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+A Pearson's Chi-squared test with Yates' continuity correction revealed a massive, highly significant structural shift in the author's vocabulary (X-squared = 144.3, df = 1, p-value < 0.001).
 
 # Conclusion
 
-```{r, include=FALSE}
-knitr::write_bib(c('knitr','rmarkdown','posterdown','pagedown'), 'packages.bib')
-```
+We confidently reject the null hypothesis. The emotional tone of Finn the Wolfhound is mathematically dependent on the dog's setting, validating Mangum's 2002 theory.
+The data reveals a deeper narrative layer: the emotion of "Trust" in the novel is entirely tethered to the dog's "master " relationship. In the chapters where Finn is isolated in the wild, this master worship is physically missing from the text, causing "Trust" vocabulary to completely plummet. Without the master present the dog, the author deliberately surges "Fear" vocabulary to maximize human drama, rather than relying on the dog's actual wolf ancestry.
 ```{r}
-pagedown::chrome_print("myfile.Rmd")
-
+knitr::include_graphics("finn_cover.jpg")
 ```
+# Nest Steps
+Mangum's text raises further questions about whether authors project specific human characteristics primarily onto dogs, or if this extends to other working animals. Future research could apply this same NLP pipeline to Black Beauty, to explore how sentiments shift when analyzing human behavior toward horses.
 
 # References
+

@@ -43,7 +43,7 @@ While reading the chapter "Dog Years, Human Fears" from Representing Animals[@ma
 Teresa Mangum's 2002 essay raises a fascinating hypothesis about this dynamic. She argues that 19th-century authors intentionally put their fictional pets in dangerous situations.For example, being isolated in the wild, to project human anxieties, such as aging and isolation, onto the animals. Biologically, this is highly debatable; since dogs descend from wolves, they should theoretically thrive in the wild rather than experience intense fear.
 To test Mangum's claims objectively, I took a data-driven approach to the novel Finn the Wolfhound. Having no prior knowledge of the plot, I generated a word cloud and discovered the most frequently used noun was "master."
 
-```{r}
+
 ```{r wordcloud, fig.align='center', fig.width=5, fig.height=5, out.width="100%"}
 finn_clean |>
   count(word, sort = TRUE) |>
@@ -65,6 +65,7 @@ Ultimately, this data will prove or reject Teresa Mangum's theory that 19th-cent
 # Methods
 
 To test the 2002 hypothesis, I built an NLP and statistical pipeline using R:
+
 * Data Preprocessing: Retrieved the text via Project Gutenberg, used Regular Expressions (Regex) to align chapter titles, and tokenized the text to filter out standard stop words.
 * Exploratory Data Analysis: Initial word counts revealed "master" most common word(excluding finn), perfectly aligning with Mangum's theories. 
 * Algorithmic Stemming: Applied the Snowball Stemming Algorithm (SnowballC) to group environmental word variations together (e.g., dark, darkness).

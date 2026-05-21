@@ -34,25 +34,33 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # Introduction
-While reading the book a chapter in the book representing animals a question came up? do we give human traits to your favorite campanions?
-I recently wrote a book about and gave a sotry to my furry friend. I gave it human emotions by representing another human and connnected the feeling of a human to a dog. I gave my dog huma n feleing about the people i care about in the name of poetry. to analize the feeling of dogs is an interesting subjec. dogs do have feeling to some extent but they are very different than human feelings. the 2002 book raised a hypothesis on people in the 19th centry, put their pets or companion in situtios where dogs being in the wild actuallticaly go though fear, hence the title of the chapter "DOg years, Human Fears". the author had strong opinions on 
+While reading the chapter "Dog Years, Human Fears" from Representing Animals, a question came up: do we give human traits to our favorite companions? I recently wrote a story about my own furry friends, Kobe and Sasha. I gave them human emotions, connecting the feelings of a human to a dog, and expressed those feelings toward the people I care about in the form of poetry. Analyzing the feelings of dogs is an interesting subject; dogs certainly do have feelings to some extent, even if they are different from human emotions.
+Teresa Mangum's 2002 essay raised a fascinating hypothesis about this exact dynamic. She argued that people in the 19th century often put their fictional pets in dangerous situations.The author had strong opinions on how writers used these environments to project human anxieties like old age onto animals.not knwing the plot of the book or reasing the story I first used a word cloud and led me to see the most common word was master. I decided to take a data driven aprroch  being isolated in the wild where the dogs would theoretically experience intense fear is upto debate since their answestors were wolfs and should thrive instead of fear. 
+This project computationally tests that exact idea using the text of Finn the Wolfhound. By analyzing the emotional vocabulary of the book, I wanted to see if the author mathematically manipulated the dog's feelings, shifting between "Trust" and "Fear" depending on whether Finn was safe at home or out in the wild. I will be using tools and algorithms to support or reject Magnums claims.
 
 
 ## Objectives
-
-1. Easy to use reproducible poster design. 
-2. Integration with R Markdown.
-3. Easy transition from `posterdown` to `pagedown` report or manuscript documents [@R-pagedown].
+The primary goal of this project is to use Natural Language Processing to mathematically map the emotional vocabulary of Finn the Wolfhound. Because dogs are descendants of wolves, they are naturally equipped to survive in the wild. I want to use statistical algorithms to see if the author artificially manipulated the narrative, forcing a spike in "Fear" words when Finn is in the wild and "Trust" words when he is with his master. Ultimately, this data will prove or reject Teresa Mangum's theory that 19th-century authors intentionally engineered these environments to mirror human anxieties about aging and isolation.
 
 # Methods
+Methods
+To computationally test the 2002 hypothesis, I built a Natural Language Processing (NLP) and statistical pipeline using R:
 
-This package uses the same workflow approach as the R Markdown you know and love. Basically it goes from RMarkdown > Knitr > Markdown > Pandoc > HTML/CSS > PDF. You can even use the bibliography the same way [@R-posterdown].
+Data Preprocessing: I retrieved the text from Project Gutenberg and used Regular Expressions (Regex) to extract and align the chronological chapter titles. I then used Tokenization to chop the text into individual words and filtered out standard English stop words.
+Word count analys: checked most common words to make a decision of the most useful data. "master" resebled and connects to perfectly witht he dieas of theresa where she also gave acklogement to the word. 
+
+Algorithmic Stemming: I applied the Snowball Stemming Algorithm (SnowballC) to group word variations together.
+Lexicon-Based Sentiment Analysis: I used the NRC Emotion Lexicon to map emotional values to the cleaned text. I specifically isolated and measured the frequencies of "Trust"and "Fear".
+
+Unsupervised Machine Learning: I initially ran  Clustering algorithms to search for emotional timelines. However, I abandoned this clustering approach when the algorithms identified extreme outlier chapters rather than the narrative environments.
+
+Statistical Inference: To establish the environments, I used a Median Split on the frequency of the word "master" to divide the book into "Domestic" and "Wild" halves. Finally, I executed a Pearson’s Chi-Squared Test with Yates’ Continuity Correction to mathematically prove whether the shift in "Trust" and "Fear" across these environments was statistically significant.
 
 # Results
+while takling this anis i noticed i do not know the plot of the book.I undertand my internal biased of wanting dogs to be placed in a truting environment. my aproced and decisions were driven by 
+We confidently reject the null hypothesis. The emotional tone of Finn the Wolfhound is mathematically dependent on the dog's setting.
+The data reveals a deeper narrative layer: the emotion of "Trust" in the novel is entirely tethered to the dog's "master worship." In the chapters where Finn is isolated in the wild, this master worship is physically missing from the text, causing "Trust" vocabulary to completely plummet. Without the master present to anchor the dog's trust, the author deliberately surges "Fear" vocabulary to fill the void and maximize the narrative drama of the wild. This provides robust, data-driven validation for Teresa Mangum's 2002 literary theory.
 
-Usually you want to have a nice table displaying some important results that you have calculated. In `posterdown` this is as easy as using the `kable` table formatting you are probably use to as per typical R Markdown formatting.
-
-You can reference tables like so: Table \@ref(tab:mytable). Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam placerat augue at velit tincidunt semper. Donec elementum porta posuere. Nullam interdum, odio at tincidunt feugiat, turpis nisi blandit eros, eu posuere risus felis non quam. Nam eget lorem odio. Duis et aliquet orci. Phasellus nec viverra est.
 
 ```{r mytable, out.width='80%'}
 knitr::kable(iris[1:10, 1:4], caption = 'Table caption.',align = 'c',"html")
@@ -78,7 +86,7 @@ plot(x = data$Sepal.Length,
 
 # Next Steps
 
-Aliquam sed faucibus risus, quis efficitur erat. Vestibulum semper mauris quis tempus eleifend. Aliquam sagittis dictum ipsum, quis viverra ligula eleifend ut. Curabitur sagittis vitae arcu eget faucibus. In non elementum felis. Duis et aliquam nunc. Nunc pulvinar sapien nunc, vel pretium nisi efficitur in. Fusce fringilla maximus leo et maximus. Fusce at ligula laoreet, iaculis mi at, auctor odio. Praesent sed elementum justo. Aenean consectetur risus rhoncus tincidunt efficitur. Praesent dictum mauris at diam maximus maximus [@R-posterdown].
+teresa raised another question on wether people used human charactericstics mostly in dogs. She raised the questions if books about horses had any different sentiments. I woould like to explore this since it connects to human behaviours. 
 
 # Conclusion
 

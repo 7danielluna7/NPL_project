@@ -11,6 +11,10 @@ In this assignment you will
 6. Update this readme file to identify the name of your book.
 7. Commit and push your work to Github.
 
-You can use the quakersaints example as a model for how to do this or you can follow the model in the Tidy Text Mining book.
 
 #Used the quakersaints model to trim the section of Finn the wolfhound by A. J. Dawson
+## Project Poster: Finn the Wolfhound
+
+Click the image below to view the full, high-resolution PDF of the poster.
+
+[![Finn the Wolfhound Poster Preview](poster_preview.png)](poster.pdf)

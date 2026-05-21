@@ -1,0 +1,52 @@
+---
+title:  The Chi-Squared Test"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+library(here)
+library(dplyr)
+library(tidyr)
+library(knitr)
+
+# Load your clean data
+load(here("data/fw_nrc.rda"))
+load(here("data/finn_clean.rda"))
+```
+### since I will try to give a mathematical andwer to the 2002 hypothesys i decided to go with a Chi-Squared test and put to test the idea that the trust and fear words were not upto chance. 
+```{r}
+
+# Count how many times the "master" is mentioned in each chapter
+master_counts <- finn_clean |>
+  filter(word == "master") |>
+  count(chapter, name = "master_mentions")
+
+# Find the median split to divide the book in half fairly
+median_master <- median(master_counts$master_mentions, na.rm = TRUE)
+
+### 2. Prep the Emotion Data 
+chi_data <- fw_nrc |>
+  # Focus strictly on the two emotions from the 2002 theory
+  filter(sentiment %in% c("fear", "trust")) |>
+  left_join(master_counts, by = "chapter") |>
+  # If a chapter had no master mentions, set it to 0
+  mutate(master_mentions = ifelse(is.na(master_mentions), 0, master_mentions)) |>
+  # Categorize the environments
+  mutate(Environment = ifelse(master_mentions >= median_master, 
+                              "Master Present (Domestic)", 
+                              "Master Absent (The Wild)"))
+
+### 3. Build the Table and Run the Math
+# Create the contingency table
+sentiment_table <- table(chi_data$Environment, chi_data$sentiment)
+
+# Print the raw table 
+kable(sentiment_table, caption = "Word Counts: Environment vs. Emotion")
+
+# Run the official test from stats package 
+final_test <- chisq.test(sentiment_table)
+print(final_test)
+```
+### with a p-value below .01 it is very likely that the hypothesis is correct and the shift in emotions were not an acciedent. 
+
+

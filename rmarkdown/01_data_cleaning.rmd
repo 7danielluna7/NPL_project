@@ -1,16 +1,13 @@
 ---
-title: "Cleaning data: Finn the Wolfhound"
+title: "Cleaning data"
 output: html_document
 ---
-
-```{r setup, message=FALSE, warning=FALSE}
+```{r}
 library(dplyr)
 library(stringr)
 library(here)
 library(tidyr)
-library(gutenbergr) 
 ```
-
 Use this document to work on cleaning your data and adding any additional variables that may be relevant.
 
 You can also add other files if it will help to organize your process (see the quakersaints-example)
@@ -23,9 +20,12 @@ if (!dir.exists(here("data"))) {
 }
 
 if (!file.exists(here("data/finn.rda"))) {
+     
      finn <- gutenberg_download(30550)
+    
      save(finn, file=here("data/finn.rda"))
 } else {
+
      load(here("data/finn.rda"))
 }
 ```
@@ -43,69 +43,31 @@ up to the "." in the table of contents.
 Then change them to upper case.
 
 ```{r}
-# Get the TOC lines
-toc <- finn |> 
-  mutate(line_number = row_number()) |>
-  filter(line_number %in% 33:97) |>
-  filter(text != "") 
+finn |> 
+  # add the line number
+  mutate(line_number =row_number()) -> finn
 
-# Clean the titles and assign a Chapter Number
-toc_clean <- toc |> 
-  mutate(
-    # Keep your great regex to grab the title
-    title = str_extract(text, "(?<=\\.).*") |> toupper() |> trimws(),
-    # Because the TOC is in perfect order, row 1 is Ch 1, row 2 is Ch 2!
-    chapter_number = row_number() 
-  ) |>
-  # Keep only what we need for the join
-  select(chapter_number, chapter_title = title)
-
-head(toc_clean)
+finn |> filter(line_number %in% 33:97) |>
+  filter(text != "") -> toc
+toc
 ```
 ```{r}
-# Get the TOC lines
-toc <- finn |> 
-  mutate(line_number = row_number()) |>
-  filter(line_number %in% 33:97) |>
-  filter(text != "") 
-
-# Clean the titles and assign a Chapter Number
-toc_clean <- toc |> 
-  mutate(
-    # Keep your great regex to grab the title
-    title = str_extract(text, "(?<=\\.).*") |> toupper() |> trimws(),
-    # Because the TOC is in perfect order, row 1 is Ch 1, row 2 is Ch 2!
-    chapter_number = row_number() 
-  ) |>
-  # Keep only what we need for the join
-  select(chapter_number, chapter_title = title)
-
-head(toc_clean)
+toc |> 
+  mutate(title = str_extract(text,
+                        "(?<=\\.).*") |> 
+           toupper() |> trimws(), 
+         chapter_title = title) |>
+    rename(toc_text = text) |>
+     select(-line_number)-> toc
+toc
 ```
 Then you can add this information to the original data
 
 ```{r}
-finn_organized <- finn |>
-  # Clean invisible spaces
-  mutate(clean_text = str_trim(text)) |>
-  
-  # Safely detect "Chapter I", "CHAPTER 2", etc., and count them up
-  mutate(chapter_number = cumsum(str_detect(clean_text, regex("^chapter", ignore_case = TRUE)))) |>
-  
-  # Drop all the intro material before Chapter 1
-  filter(chapter_number > 0)
-finn_with_chapters <- finn_organized |>
-  left_join(toc_clean, by = "chapter_number") |>
-  
-  # We don't even need fill() anymore because the join perfectly assigns 
-  # the title to every single word in that chapter!
-  select(-clean_text) # Drop our temporary cleaning column
-
-# Save the beautifully clean, titled data!
-save(finn_with_chapters, file = here("data/finn_with_chapters.rda"))
-
-# Quick sanity check: Did we get all the chapters?
-max(finn_with_chapters$chapter_number, na.rm = TRUE)
+finn |> left_join(toc, join_by(
+  "gutenberg_id" == "gutenberg_id",
+   "text" == "title"
+  )) |> fill(chapter_title) -> finn
 ```
 
 At this point you can save the updated file.
@@ -117,4 +79,3 @@ This way you can compare the chapters to each other.
 ```{r}
 save(finn, file = here("data/finn_with_chapters.rda"))
 ```
-

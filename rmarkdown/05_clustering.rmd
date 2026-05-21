@@ -1,12 +1,10 @@
-
 ---
-title: "Cluster Analysis: Identifying Emotional Environments"
+title: "Cluster Analysis: Emotional Environments"
 output: html_document
 ---
 
 ```{r setup, message=FALSE, warning=FALSE}
-
-install.packages("factoextra")
+# install.packages("factoextra")
 library(here)
 library(dplyr)
 library(tidyr)
@@ -16,14 +14,10 @@ library(factoextra)
 library(knitr)
 ```
 
-
 ###from previous nrc sentiments, the most common emotions were trust(mother, food), fear( hunting, jaws ), anger (droping positive and negative)
 
 
 ```{r}
-library(here)
-library(dplyr)
-
 if (!exists("fw_nrc" )){
   load(here("data/fw_nrc.rda"))
 }
@@ -36,40 +30,58 @@ fw_nrc$title_short <- paste("Ch", fw_nrc$chapter)
 title_translate <- fw_nrc |> 
   group_by(chapter, title_short) |> 
   summarize(n_tokens = n(), .groups = "drop")
+
 max(fw_nrc$chapter, na.rm = TRUE)
-tail(title_translate)
 ```
 
 ```{r}
-library(dplyr)
-library(tidyr)
-
-# Create the wide matrix from your existing fw_nrc data
+# inspiration from professor, creating an emotional matrix baased on top emotions 
 nrc_wide <- fw_nrc |>
-  # 1. Drop generic positive/negative to focus purely on the 8 core emotions
+  
   filter(!sentiment %in% c("positive", "negative")) |>
   
-  # 2. Count how many of each emotion appear in each chapter
+  # Count how many of each emotion appear in each chapter
   count(chapter, sentiment) |>
   
-  # 3. Calculate the percentage of each emotion per chapter
+  # Calculate the percentage of each emotion per chapter
   group_by(chapter) |>
   mutate(prop = n / sum(n)) |>
   select(-n) |>
   
-  # 4. PIVOT WIDER: This creates the actual matrix!
-  # It turns the 'sentiment' column into 8 separate columns
+  # PIVOT WIDER: This creates the actual matrix!
   pivot_wider(names_from = sentiment, values_from = prop, values_fill = 0) |>
   as.data.frame()
 
-# 5. The clustering algorithm requires the row names to be the chapter labels
 rownames(nrc_wide) <- paste("Chapter", nrc_wide$chapter)
 nrc_wide <- nrc_wide |> select(-chapter)
 
 # Take a peek at your beautiful new matrix!
-head(nrc_wide)
+(nrc_wide)
 ```
 ### some insight on the top sentiments and how they progress over the chapters. 
+```{r}
+finn_dist <- dist(nrc_wide, method = "euclidean")
+
+# What is the optimal number of clusters?
+fviz_nbclust(nrc_wide, pam, method = "silhouette") +
+  theme_classic() +
+  labs(title = "Optimal Number of Clusters for Finn's Emotions")
+
+finn_clusters <- pam(nrc_wide, k = 3, metric = "euclidean", stand = FALSE)
+
+# 2. Visualize the clusters
+
+fviz_cluster(finn_clusters,
+             ellipse.type = "t",
+             repel = TRUE,
+             ggtheme = theme_classic(),
+             main = "Emotional Clusters of Chapters")
+```
+
+##the final veridict was that there was no clear clluster in the book. 
+
+
+
 
 
 

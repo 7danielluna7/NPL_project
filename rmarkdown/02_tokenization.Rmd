@@ -38,16 +38,16 @@ nrow(finn_clean)
 
 ### Checking the unique words
 ```{r}
-unique(fw_tokens$word) |> length()
+unique(finn_clean$word) |> length()
 
 ```
 
 ### We can also check for the most common words
 ```{r}
-fw_tokens |> count(word, sort = TRUE) |> head(20)
+finn_clean |> count(word, sort = TRUE) |> head(20)
 ```
 
-### I can see that the msot common words are finn and master, which shows me a good undertanding about the sory and the environment. 
+### I can see that the msot common words are finn and master, which shows me a good undertanding about the story and the environment. 
 ```{r}
 
 

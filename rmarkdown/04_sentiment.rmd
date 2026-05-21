@@ -23,7 +23,7 @@ load(here("data/finn_clean.rda"))
 ##decided to only explore nrc lexicon but add a word cloud first.
 
 ```{r}
-install.packages("wordcloud")
+#install.packages("wordcloud")
 library(wordcloud)
 library(RColorBrewer) 
 

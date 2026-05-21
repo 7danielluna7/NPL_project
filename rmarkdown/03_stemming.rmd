@@ -11,14 +11,7 @@ library(here)
 load(here("data/finn_clean.rda"))
 
 ```
-```{r}
-# We create a new column for stemmed 
-finn_stemmed <- finn_clean |> 
-  mutate(word_stemmed = wordStem(word, language = "english"))
 
-# Save this as a NEW dataset so your unstemmed finn_clean.rda remains untouched!
-save(finn_stemmed, file = here("data/finn_stemmed.rda"))
-```
 
 
 

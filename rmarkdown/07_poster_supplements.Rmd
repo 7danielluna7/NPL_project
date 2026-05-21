@@ -33,16 +33,14 @@ library(kableExtra)
 # Load data
 load(here("data/fw_nrc.rda"))
 load(here("data/finn_clean.rda"))
-
 ```
 
 # Introduction 
 
-While reading the chapter "Dog Years, Human Fears" from Representing Animals[@mangum2002], a question came up: do we give human traits to our favorite companions?I recently wrote a story and some poetry about my own furry friends, Kobe and Sasha, projecting human emotions onto them to express how I feel about the people I care about.
-
-Teresa Mangum's 2002 essay raises a fascinating hypothesis about this dynamic. She argues that 19th-century authors intentionally put their fictional pets in dangerous situations.For example, being isolated in the wild, to project human anxieties, such as aging and isolation, onto the animals. Biologically, this is highly debatable; since dogs descend from wolves, they should theoretically thrive in the wild rather than experience intense fear.
+  While reading the chapter "Dog Years, Human Fears" from Representing Animals [@mangum2002], a question came up: do we give human traits to our favorite companions? I recently wrote a story and some poetry about my own furry friends, Kobe and Sasha, projecting human emotions onto them to express how I feel about the people I care about.
+  
+  Teresa Mangum's 2002 essay raises a fascinating hypothesis about this dynamic. She argues that 19th-century authors intentionally put their fictional pets in dangerous situations. For example, being isolated in the wild—to project human anxieties, such as aging and isolation, onto the animals. Biologically, this is highly debatable; since dogs descend from wolves, they should theoretically thrive in the wild rather than experience intense fear.
 To test Mangum's claims objectively, I took a data-driven approach to the novel Finn the Wolfhound. Having no prior knowledge of the plot, I generated a word cloud and discovered the most frequently used noun was "master."
-
 
 ```{r wordcloud, fig.align='center', fig.width=5, fig.height=5, out.width="100%"}
 finn_clean |>
@@ -60,14 +58,14 @@ I wanted to see if the author mathematically manipulated the dog's feelings, art
 
 The primary goal of this project is to use Natural Language Processing to mathematically map the emotional vocabulary of Finn the Wolfhound.
 I want to use statistical algorithms to see if the author artificially manipulated the narrative, forcing a spike in "Fear" words when Finn is in the wild and "Trust" words when he is with his master.
-Ultimately, this data will prove or reject Teresa Mangum's theory that 19th-century authors intentionally engineered these environments to mirror human anxieties about aging and isolation.
+Ultimately, this data will prove or reject Teresa Mangum's theory that 19th-century authors intentionally selected these environments to mirror human anxieties about aging and isolation.
 
 # Methods
 
 To test the 2002 hypothesis, I built an NLP and statistical pipeline using R:
 
 * Data Preprocessing: Retrieved the text via Project Gutenberg, used Regular Expressions (Regex) to align chapter titles, and tokenized the text to filter out standard stop words.
-* Exploratory Data Analysis: Initial word counts revealed "master" most common word(excluding finn), perfectly aligning with Mangum's theories. 
+* Exploratory Data Analysis: Initial word counts revealed "master" as the most common word (excluding Finn), perfectly aligning with Mangum's theories.
 * Algorithmic Stemming: Applied the Snowball Stemming Algorithm (SnowballC) to group environmental word variations together (e.g., dark, darkness).
 * Sentiment Analysis: Used the NRC Emotion Lexicon to isolate and measure the frequencies of "Trust" and "Fear" across the text.
 * Machine Learning Models: Initially ran unsupervised clustering algorithms to search for emotional timelines, but abandoned this approach when the algorithms isolated extreme outlier chapters rather than narrative environments.[@smltar]
@@ -120,7 +118,7 @@ The data reveals a deeper narrative layer: the emotion of "Trust" in the novel i
 ```{r}
 knitr::include_graphics("finn_cover.jpg")
 ```
-# Nest Steps
+# Next Steps
 Mangum's text raises further questions about whether authors project specific human characteristics primarily onto dogs, or if this extends to other working animals. Future research could apply this same NLP pipeline to Black Beauty, to explore how sentiments shift when analyzing human behavior toward horses.
 
 # References

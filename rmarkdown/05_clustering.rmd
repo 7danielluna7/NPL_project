@@ -1,0 +1,76 @@
+
+---
+title: "Cluster Analysis: Identifying Emotional Environments"
+output: html_document
+---
+
+```{r setup, message=FALSE, warning=FALSE}
+
+install.packages("factoextra")
+library(here)
+library(dplyr)
+library(tidyr)
+library(cluster)
+library(ggplot2)
+library(factoextra)
+library(knitr)
+```
+
+
+###from previous nrc sentiments, the most common emotions were trust(mother, food), fear( hunting, jaws ), anger (droping positive and negative)
+
+
+```{r}
+library(here)
+library(dplyr)
+
+if (!exists("fw_nrc" )){
+  load(here("data/fw_nrc.rda"))
+}
+if (!exists("finn_clean" )){
+  load(here("data/finn_clean.rda"))
+}
+
+fw_nrc$title_short <- paste("Ch", fw_nrc$chapter)
+
+title_translate <- fw_nrc |> 
+  group_by(chapter, title_short) |> 
+  summarize(n_tokens = n(), .groups = "drop")
+max(fw_nrc$chapter, na.rm = TRUE)
+tail(title_translate)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+# Create the wide matrix from your existing fw_nrc data
+nrc_wide <- fw_nrc |>
+  # 1. Drop generic positive/negative to focus purely on the 8 core emotions
+  filter(!sentiment %in% c("positive", "negative")) |>
+  
+  # 2. Count how many of each emotion appear in each chapter
+  count(chapter, sentiment) |>
+  
+  # 3. Calculate the percentage of each emotion per chapter
+  group_by(chapter) |>
+  mutate(prop = n / sum(n)) |>
+  select(-n) |>
+  
+  # 4. PIVOT WIDER: This creates the actual matrix!
+  # It turns the 'sentiment' column into 8 separate columns
+  pivot_wider(names_from = sentiment, values_from = prop, values_fill = 0) |>
+  as.data.frame()
+
+# 5. The clustering algorithm requires the row names to be the chapter labels
+rownames(nrc_wide) <- paste("Chapter", nrc_wide$chapter)
+nrc_wide <- nrc_wide |> select(-chapter)
+
+# Take a peek at your beautiful new matrix!
+head(nrc_wide)
+```
+### some insight on the top sentiments and how they progress over the chapters. 
+
+
+
+

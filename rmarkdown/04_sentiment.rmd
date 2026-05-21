@@ -94,4 +94,9 @@ fw_nrc |>
        x = "Word", y = "Count") +
   theme_minimal()
 ```
+```{r}
+#save file 
+save(fw_nrc, file = here("data/fw_nrc.rda"))
+```
+
 ### defenily found some insight that i liked. I noticed that fear words are when the dog is in the wild or woods. It could be a time when he is with the master but to futher show this i will be using clustering to see if there is a timeline. does the author give more fear and trust in certain chapters? is the fear more apperent when the dog is by hilslef , "hunting" . these match perfectly with 2002 to claim and my hypothsis. 

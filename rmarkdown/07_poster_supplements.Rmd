@@ -39,7 +39,7 @@ load(here("data/finn_clean.rda"))
 
   While reading the chapter "Dog Years, Human Fears" from Representing Animals [@mangum2002], a question came up: do we give human traits to our favorite companions? I recently wrote a story and some poetry about my own furry friends, Kobe and Sasha, projecting human emotions onto them to express how I feel about the people I care about.
   
-  Teresa Mangum's 2002 essay raises a fascinating hypothesis about this dynamic. She argues that 19th-century authors intentionally put their fictional pets in dangerous situations. For example, being isolated in the wild—to project human anxieties, such as aging and isolation, onto the animals. Biologically, this is highly debatable; since dogs descend from wolves, they should theoretically thrive in the wild rather than experience intense fear.
+  Teresa Mangum's 2002 essay raises a fascinating hypothesis about this dynamic. She argues that 19th-century authors intentionally put their fictional pets in dangerous situations. For example, being isolated in the wild, project human anxieties, such as aging and isolation, onto the animals. Biologically, this is highly debatable; since dogs descend from wolves, they should theoretically thrive in the wild rather than experience intense fear.
 To test Mangum's claims objectively, I took a data-driven approach to the novel Finn the Wolfhound. Having no prior knowledge of the plot, I generated a word cloud and discovered the most frequently used noun was "master."
 
 ```{r wordcloud, fig.align='center', fig.width=5, fig.height=5, out.width="100%"}
@@ -48,7 +48,7 @@ finn_clean |>
   with(wordcloud(words = word, freq = n, 
                  max.words = 50, 
                  random.order = FALSE, 
-                 scale = c(5, 0.5),      
+                 scale = c(8, 0.5),      
                  colors = brewer.pal(8, "Dark2")))
 ```
 
@@ -64,9 +64,9 @@ Ultimately, this data will prove or reject Teresa Mangum's theory that 19th-cent
 
 To test the 2002 hypothesis, I built an NLP and statistical pipeline using R:
 
-* Data Preprocessing: Retrieved the text via Project Gutenberg, used Regular Expressions (Regex) to align chapter titles, and tokenized the text to filter out standard stop words.
+* Data cleaning and wrangling: Retrieved the text via Project Gutenberg, used Regular Expressions (Regex) to align chapter titles, and tokenized the text to filter out standard stop words.
 * Exploratory Data Analysis: Initial word counts revealed "master" as the most common word (excluding Finn), perfectly aligning with Mangum's theories.
-* Algorithmic Stemming: Applied the Snowball Stemming Algorithm (SnowballC) to group environmental word variations together (e.g., dark, darkness).
+* Algorithmic Stemming: Applied the Snowball Stemming Algorithm (SnowballC) to group sentiments. 
 * Sentiment Analysis: Used the NRC Emotion Lexicon to isolate and measure the frequencies of "Trust" and "Fear" across the text.
 * Machine Learning Models: Initially ran unsupervised clustering algorithms to search for emotional timelines, but abandoned this approach when the algorithms isolated extreme outlier chapters rather than narrative environments.[@smltar]
 * Statistical Inference: Used a median split on the frequency of the word "master" to divide the book into "Domestic" and "Wild" halves, then executed a Pearson’s Chi-Squared Test to prove if the emotional shifts were statistically significant.
@@ -75,6 +75,7 @@ To test the 2002 hypothesis, I built an NLP and statistical pipeline using R:
 Going into this analysis without knowing the plot allowed the data to lead the narrative. The numbers revealed a stark and deliberate emotional contrast between the two environments.
 Sentiment Distribution
 Mentions of "Trust" were heavily correlated with domestic figures, while "Fear" vocabulary dominated scenes where Finn was isolated.
+
 ```{r}
 fw_nrc |> 
   group_by(sentiment) |> 
@@ -86,7 +87,6 @@ fw_nrc |>
        x = "Sentiment", y = "Word Count") +
   theme_minimal(base_size = 14)
 ```
-
 Statistical Proof
 Dividing the novel into "Master Present" and "Master Absent" environments yielded definitive mathematical results:
 ```{r}
@@ -109,7 +109,7 @@ sentiment_table <- table(chi_data$Environment, chi_data$sentiment)
 kable(sentiment_table, caption = "Word Counts: Environment vs. Emotion") |>
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
 ```
-A Pearson's Chi-squared test with Yates' continuity correction revealed a massive, highly significant structural shift in the author's vocabulary (X-squared = 144.3, df = 1, p-value < 0.001).
+A Pearson's Chi-squared test with Yates' continuity correction revealed a massive, highly significant structural shift in the author's vocabulary (X-squared = 144.3, df = 1, p-value < 0.001)
 
 # Conclusion
 
@@ -118,7 +118,9 @@ The data reveals a deeper narrative layer: the emotion of "Trust" in the novel i
 ```{r}
 knitr::include_graphics("finn_cover.jpg")
 ```
+
 # Next Steps
+
 Mangum's text raises further questions about whether authors project specific human characteristics primarily onto dogs, or if this extends to other working animals. Future research could apply this same NLP pipeline to Black Beauty, to explore how sentiments shift when analyzing human behavior toward horses.
 
 # References
